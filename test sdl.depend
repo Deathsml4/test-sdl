@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1679941324 source:c:\code blocks project\test sdl\main.cpp
+1681678362 source:c:\code blocks project\test sdl\main.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -10,7 +10,7 @@
 	<SDL.h>
 	<SDL_image.h>
 
-1679920068 source:c:\code blocks project\test sdl\game.cpp
+1679942846 source:c:\code blocks project\test sdl\game.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>

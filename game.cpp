@@ -5,7 +5,7 @@
 
 const int SCREEN_WIDTH = 1400;
 const int SCREEN_HEIGHT = 800;
-const std::string WINDOW_TITLE = "POC KET MON STA";
+const std::string WINDOW_TITLE = "Nes Danj";
 
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal)
 {
