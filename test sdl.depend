@@ -1,11 +1,14 @@
 # depslib dependency file v1.0
-1681678362 source:c:\code blocks project\test sdl\main.cpp
+1682279344 source:c:\code blocks project\test sdl\main.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
+	<SDL_ttf.h>
+	<ctime>
 	"game.h"
+	"TextObject.h"
 
-1679824600 c:\code blocks project\test sdl\game.h
+1682207144 c:\code blocks project\test sdl\game.h
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -15,4 +18,15 @@
 	<SDL.h>
 	<SDL_image.h>
 	"game.h"
+
+1682210322 c:\code blocks project\test sdl\textobject.h
+	<iostream>
+	"game.h"
+	<SDL_ttf.h>
+
+1682274388 source:c:\code blocks project\test sdl\textobject.cpp
+	"game.h"
+	"TextObject.h"
+	<SDL_ttf.h>
+	<string>
 
