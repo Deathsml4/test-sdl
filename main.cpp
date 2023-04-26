@@ -21,6 +21,7 @@ TTF_Font* font = NULL;
 
 
 
+
 /*enum Action{
     LEFT, RIGHT, UP, DOWN, NONE, QUIT, PAUSE
 };
@@ -63,7 +64,7 @@ struct point {
             cerr << "Score : " << score << endl;
             get_point();
         }
-        else if (SDL_GetTicks() - time_point >= 10000){
+        else if (SDL_GetTicks() - time_point >= 20000){
             get_point();
         }
     }
@@ -92,6 +93,7 @@ struct Laser{
          x[5] = x_central ; y[5] = 0;
     }
     int side = 1;
+
     void roll(SDL_Rect* prect){
         for (int i = 0 ; i < 6 ; i++){
             int new_x = x[i]*0.9999 - y[i]*0.0141*side;
@@ -148,8 +150,31 @@ struct Laser{
 
     }
 };
-void menu (SDL_Renderer* renderer){
 
+void printMenu (SDL_Renderer* renderer,TTF_Font* font){
+    SDL_SetRenderDrawColor(renderer,255,255,255,255);
+    SDL_RenderClear(renderer);
+    TextObject menu;
+    menu.setColor(TextObject::Black_Text);
+    std::string str_start = "Press SPACE to play";
+    std::string str_exit = "Press ESCAPE to exit";
+    std::string str_stop = "While playing, press P to pause";
+    std::string str_ins = "INSTRUCTION";
+    menu.setText(str_start);
+    menu.loadFromRenderText(font,renderer);
+    menu.render(renderer, 300, 100);
+    menu.setText(str_exit);
+    menu.loadFromRenderText(font,renderer);
+    menu.render(renderer, 300, 300);
+    menu.setText(str_stop);
+    menu.loadFromRenderText(font,renderer);
+    menu.render(renderer, 300, 500);
+    menu.setColor(TextObject::Red_Text);
+    menu.setText(str_ins);
+    menu.loadFromRenderText(font,renderer);
+    menu.render(renderer, 100, 100);
+    SDL_RenderPresent(renderer);
+    menu.free();
 }
 
 
@@ -173,10 +198,24 @@ int main(int argc, char* argv[])
     SDL_Renderer* renderer;
     initSDL(window, renderer);
 
+    if (TTF_Init() < 0)
+    {
+    SDL_Log("%s", TTF_GetError());
+        return -1;
+    }
 
+    font = TTF_OpenFont("Font//Calibri Light.ttf",20);
+    TextObject score_text;
+    score_text.setColor(TextObject::White_Text);
+    TextObject red_text;
+    red_text.setColor(TextObject::Red_Text);
+    TextObject black_text;
+    black_text.setColor(TextObject::Black_Text);
 
-
-
+    SDL_Event event;
+    printMenu(renderer,font);
+    SDL_RenderPresent(renderer);
+    SDL_Delay(5000);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     SDL_Texture* GameOver = loadTexture("GameOver.png", renderer);
@@ -196,20 +235,12 @@ int main(int argc, char* argv[])
     rect.y = y_central;
     SDL_RenderCopy(renderer, pic, NULL, &rect);
 
+
+
+
     SDL_RenderPresent(renderer);
 
-    if (TTF_Init() < 0)
-    {
-    SDL_Log("%s", TTF_GetError());
-        return -1;
-    }
-    font = TTF_OpenFont("Font//Calibri Light.ttf",20);
-    TextObject score_text;
-    score_text.setColor(TextObject::White_Text);
-    TextObject red_text;
-    red_text.setColor(TextObject::Red_Text);
-    TextObject black_text;
-    black_text.setColor(TextObject::Black_Text);
+
 
 
 
@@ -223,8 +254,11 @@ int main(int argc, char* argv[])
     std::string str_switch = " SWITCH ";
 
     bool quit = false;
-    SDL_Event event;
+    bool paused = 0;
+
     bool game1 = 0;
+    bool game1_done = 0;
+    bool game2 = 0;
     while (!quit){
         if (SDL_PollEvent(&event) == 0) {
             continue;
@@ -233,7 +267,9 @@ int main(int argc, char* argv[])
         else if (event.type == SDL_KEYDOWN){
             switch (event.key.keysym.sym){
                 case SDLK_ESCAPE: quit = true; break;
-                case SDLK_SPACE: game1 = 1; break;
+                case SDLK_SPACE:
+                    game1 = 1;
+                    break;
                 default : break;
             }
         }
@@ -249,7 +285,21 @@ int main(int argc, char* argv[])
         laser.render(renderer);
         SDL_RenderPresent(renderer);
         while (game1){
-
+            if (paused){
+                if (SDL_PollEvent(&event) == 0) {
+                    continue;
+                }
+                if (event.type == SDL_KEYDOWN){
+                    if (event.key.keysym.sym == SDLK_p){
+                        paused = !paused;
+                    }
+                    else if (event.key.keysym.sym == SDLK_ESCAPE){
+                        game1 = 0;
+                        quit = 1;
+                    }
+                }
+                continue;
+            }
             if (SDL_GetTicks() - time  >= 30000){
                 laser.side *= -1;
                 time = SDL_GetTicks();
@@ -293,6 +343,10 @@ int main(int argc, char* argv[])
             else if (event.type == SDL_KEYDOWN){
                 switch (event.key.keysym.sym){
                     case SDLK_ESCAPE: quit = 1; game1 = 0 ; break;
+                    case SDLK_p:{
+                        paused = !paused;
+                        break;
+                    }
                     default : break;
                 }
             }
@@ -306,15 +360,18 @@ int main(int argc, char* argv[])
                 SDL_RenderCopy(renderer, GameOver, NULL, NULL);
 
                 font = TTF_OpenFont("Font//Calibri Light.ttf",60);
-                score_text.loadFromRenderText(font, renderer);
-                score_text.render(renderer,SCREEN_WIDTH/2 -100, SCREEN_HEIGHT -200);
+                black_text.setText(str_score);
+                black_text.loadFromRenderText(font, renderer);
+                black_text.render(renderer,SCREEN_WIDTH/2 -100, SCREEN_HEIGHT -200);
                 quit = 1;
 
                 SDL_RenderPresent(renderer);
                 quit = 1;
                 game1 = 0;
             }
+
         }
+
 
 
 
@@ -328,14 +385,15 @@ int main(int argc, char* argv[])
     SDL_Delay(100);
     // Your drawing code here
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderClear(renderer);
 
     // use SDL_RenderPresent(renderer) to show it
     SDL_RenderPresent (renderer);
 
 	waitUntilKeyPressed();
     quitSDL(window, renderer);
+    score_text.free();
+    black_text.free();
+    red_text.free();
     TTF_Quit();
     return 0;
 }

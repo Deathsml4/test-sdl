@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1682279344 source:c:\code blocks project\test sdl\main.cpp
+1682473388 source:c:\code blocks project\test sdl\main.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
